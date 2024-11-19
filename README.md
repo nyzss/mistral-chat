@@ -1,3 +1,40 @@
-Mini Chat interface using the Mistral API, nothing fancy as of yet
+# Mini Chat Interface
 
-Using Next.js, shadcn and tailwind for the frontend, and temporarely the Nextjs route handlers for the backend
+A mini chat interface using the Mistral API. Built with Next.js, shadcn, and Tailwind CSS for the frontend, and using Next.js route handlers for the backend.
+
+## Tech Stack and Frameworks
+
+- **Frontend:**
+  - Next.js
+  - shadcn
+  - Tailwind CSS
+  - Zod
+  - React Markdown
+  - Jotai
+
+- **Backend:**
+  - Next.js API routes
+
+## Installation
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/mini-chat-interface.git
+    cd mini-chat-interface
+    ```
+
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+
+3. Run the development server:
+    ```bash
+    npm run dev
+    ```
+
+4. Open [http://localhost:3000](http://localhost:3000)
+
+## License
+
+This project is licensed under the MIT License.
