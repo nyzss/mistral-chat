@@ -2,6 +2,8 @@
 
 A mini chat interface using the Mistral API. Built with Next.js, shadcn, and Tailwind CSS for the frontend, and using Next.js route handlers for the backend.
 
+#### You can access it on [https://chat.okankoca.dev](https://chat.okankoca.dev)
+
 ## Tech Stack and Frameworks
 
 - **Frontend:**
