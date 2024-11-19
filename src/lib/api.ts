@@ -1,7 +1,7 @@
-import { ChatFormValues } from "@/app/page";
+import { Message } from "@/app/api/chat/route";
 import { AssistantMessage } from "@mistralai/mistralai/models/components";
 
-export const sendMessage = async (message: ChatFormValues) => {
+export const sendMessage = async (message: Message[]) => {
     const res = await fetch("/api/chat", {
         method: "POST",
         body: JSON.stringify(message),

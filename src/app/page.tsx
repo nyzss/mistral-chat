@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,7 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { sendMessage } from "@/lib/api";
 import Markdown from "react-markdown";
-import { AssistantMessage } from "@mistralai/mistralai/models/components";
+import { useAtom } from "jotai/react";
+import { messageAtom } from "@/lib/atoms";
+import { UserMessage } from "@mistralai/mistralai/models/components";
+import { useRef } from "react";
 
 const chatFormSchema = z.object({
     message: z.string().min(1).max(1000),
@@ -25,7 +27,8 @@ const chatFormSchema = z.object({
 export type ChatFormValues = z.infer<typeof chatFormSchema>;
 
 export default function Home() {
-    const [messages, setMessages] = useState<AssistantMessage[]>([]);
+    const [messages, setMessages] = useAtom(messageAtom);
+    const messagesBox = useRef<HTMLDivElement>(null);
 
     const form = useForm<ChatFormValues>({
         resolver: zodResolver(chatFormSchema),
@@ -35,44 +38,59 @@ export default function Home() {
     });
 
     const onSubmit = async (values: ChatFormValues) => {
-        sendMessage(values).then((res) => {
-            setMessages(res);
+        const user_message: UserMessage = {
+            role: "user",
+            content: values.message,
+        };
+        const updated_messages = [...messages, user_message];
+        setMessages(updated_messages);
+        sendMessage(updated_messages).then((res) => {
+            setMessages([...updated_messages, ...res]);
+            messagesBox.current?.scrollTo({
+                top: messagesBox.current?.scrollHeight,
+                behavior: "smooth",
+            });
         });
+
         form.reset();
     };
-    // <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-    //     {messages.map((m) => (
-    //         <div key={m.id} className="whitespace-pre-wrap">
-    //             {m.role === "user" ? "User: " : "AI: "}
-    //             {m.content}
-    //         </div>
-    //     ))}
-
-    //     <form onSubmit={handleSubmit}>
-    //         <input
-    //             className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
-    //             value={input}
-    //             placeholder="Say something..."
-    //             onChange={handleInputChange}
-    //         />
-    //     </form>
-    // </div>;
 
     return (
         <div className="w-screen h-screen">
-            <div>
-                {messages.map((message, index) => (
-                    <div key={index} className="flex flex-col divide-y">
-                        {message.role === "assistant" ? "AI: " : "User: "}
-                        <Markdown>
-                            {typeof message.content === "string"
-                                ? message.content
-                                : ""}
-                        </Markdown>
-                    </div>
-                ))}
-            </div>
-            <div className="flex flex-col w-full max-w-md py-24 mx-auto items-stretch">
+            <Button
+                onClick={() => setMessages([])}
+                className="fixed m-4 font-medium text-xl"
+                variant={"ghost"}
+            >
+                Clear Chat
+            </Button>
+            <div className="flex flex-col w-full max-w-xl py-24 mx-auto items-stretch">
+                <div
+                    className="flex-grow overflow-y-auto max-h-[calc(100vh-250px)] space-y-4"
+                    ref={messagesBox}
+                >
+                    {messages.map((message, index) => (
+                        <div
+                            key={index}
+                            className="flex flex-col bg-neutral-900 rounded-md p-3"
+                        >
+                            <h1
+                                className={`font-bold text-lg ${
+                                    message.role === "assistant"
+                                        ? "text-yellow-500"
+                                        : "text-neutral-200"
+                                }`}
+                            >
+                                {message.role?.toUpperCase()}
+                            </h1>
+                            <Markdown>
+                                {typeof message.content === "string"
+                                    ? message.content
+                                    : ""}
+                            </Markdown>
+                        </div>
+                    ))}
+                </div>
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}

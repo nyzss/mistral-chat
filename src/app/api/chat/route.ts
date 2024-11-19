@@ -1,4 +1,3 @@
-import { ChatFormValues } from "@/app/page";
 import { Mistral } from "@mistralai/mistralai";
 import {
     AssistantMessage,
@@ -9,26 +8,22 @@ import {
 
 const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
-// export type Messages = UserMessage | SystemMessage;
 export type Message =
-    | (SystemMessage & { role: "system" })
-    | (UserMessage & { role: "user" })
-    | (AssistantMessage & { role: "assistant" })
-    | (ToolMessage & { role: "tool" });
+    | SystemMessage
+    | UserMessage
+    | AssistantMessage
+    | ToolMessage;
+
+export type ReceivedMessage = Message & { role: string };
 
 export async function POST(request: Request) {
     try {
-        // const data: Message[] = await request.json();
-        const data: ChatFormValues = await request.json();
+        const data: ReceivedMessage[] = await request.json();
+        console.warn("DATAAAAAAAAAAAAAAA: ", data);
 
         const completion = await mistral.chat.complete({
             model: "mistral-small-latest",
-            messages: [
-                {
-                    role: "user",
-                    content: data.message,
-                },
-            ],
+            messages: data,
         });
 
         const messages: AssistantMessage[] | undefined =
