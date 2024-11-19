@@ -39,20 +39,46 @@ export default function Home() {
             setMessages(res);
         });
     };
+    // <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    //     {messages.map((m) => (
+    //         <div key={m.id} className="whitespace-pre-wrap">
+    //             {m.role === "user" ? "User: " : "AI: "}
+    //             {m.content}
+    //         </div>
+    //     ))}
+
+    //     <form onSubmit={handleSubmit}>
+    //         <input
+    //             className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+    //             value={input}
+    //             placeholder="Say something..."
+    //             onChange={handleInputChange}
+    //         />
+    //     </form>
+    // </div>;
 
     return (
         <div className="w-screen h-screen">
-            <div className="max-w-3xl">
+            <div>
+                {messages.map((message, index) => (
+                    <div key={index} className="flex flex-col divide-y">
+                        <h1>role: {message.role}</h1>
+                        <Markdown>{message.content}</Markdown>
+                    </div>
+                ))}
+            </div>
+            <div className="flex flex-col w-full max-w-md py-24 mx-auto items-stretch">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-8"
+                        // className="space-y-8"
+                        className="space-y-8 fixed bottom-0 mb-6 w-full flex space-x-3"
                     >
                         <FormField
                             control={form.control}
                             name="message"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="max-w-md w-full">
                                     <FormLabel>Message</FormLabel>
                                     <FormControl>
                                         <Input
@@ -71,15 +97,6 @@ export default function Home() {
                         <Button type="submit">Send</Button>
                     </form>
                 </Form>
-            </div>
-            <div>
-                {messages.map((message, index) => (
-                    <div key={index} className="flex flex-col divide-y">
-                        <h1>role: {message.role}</h1>
-                        <p>content: </p>
-                        <Markdown>{message.content}</Markdown>
-                    </div>
-                ))}
             </div>
         </div>
     );
