@@ -18,7 +18,8 @@ import Markdown from "react-markdown";
 import { useAtom } from "jotai/react";
 import { messageAtom } from "@/lib/atoms";
 import { UserMessage } from "@mistralai/mistralai/models/components";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const chatFormSchema = z.object({
     message: z.string().min(1).max(1000),
@@ -28,6 +29,7 @@ export type ChatFormValues = z.infer<typeof chatFormSchema>;
 
 export default function Home() {
     const [messages, setMessages] = useAtom(messageAtom);
+    const [loading, setLoading] = useState<boolean>(false);
     const messagesBox = useRef<HTMLDivElement>(null);
 
     const form = useForm<ChatFormValues>({
@@ -38,6 +40,7 @@ export default function Home() {
     });
 
     const onSubmit = async (values: ChatFormValues) => {
+        setLoading(true);
         const user_message: UserMessage = {
             role: "user",
             content: values.message,
@@ -46,14 +49,18 @@ export default function Home() {
         setMessages(updated_messages);
         sendMessage(updated_messages).then((res) => {
             setMessages([...updated_messages, ...res]);
-            messagesBox.current?.scrollTo({
-                top: messagesBox.current?.scrollHeight,
-                behavior: "smooth",
-            });
+            setLoading(false);
         });
 
         form.reset();
     };
+
+    useEffect(() => {
+        messagesBox.current?.scrollTo({
+            top: messagesBox.current?.scrollHeight,
+            behavior: "smooth",
+        });
+    }, [messages]);
 
     return (
         <div className="w-screen h-screen">
@@ -72,7 +79,7 @@ export default function Home() {
                     {messages.map((message, index) => (
                         <div
                             key={index}
-                            className="flex flex-col bg-neutral-900 rounded-md p-3"
+                            className="flex flex-col bg-neutral-900 rounded-sm p-3"
                         >
                             <h1
                                 className={`font-bold text-lg ${
@@ -90,6 +97,17 @@ export default function Home() {
                             </Markdown>
                         </div>
                     ))}
+                    {loading && (
+                        <div className="animate-pulse flex p-4 space-x-3 bg-neutral-900 rounded-sm">
+                            <h1>
+                                <span className="text-yellow-500">
+                                    ASSISTANT
+                                </span>{" "}
+                                is typing..
+                            </h1>
+                            <Loader2 className="animate-spin" />
+                        </div>
+                    )}
                 </div>
                 <Form {...form}>
                     <form
