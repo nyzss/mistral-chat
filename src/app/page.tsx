@@ -66,14 +66,14 @@ export default function Home() {
         <div className="w-screen h-screen">
             <Button
                 onClick={() => setMessages([])}
-                className="fixed m-4 font-medium text-xl"
-                variant={"ghost"}
+                className="fixed m-4 font-medium text-xl border-yellow-500"
+                variant={"outline"}
             >
                 Clear Chat
             </Button>
-            <div className="flex flex-col w-full max-w-xl py-24 mx-auto items-stretch">
+            <div className="flex flex-col w-full max-w-xl py-20 mx-auto items-stretch">
                 <div
-                    className="flex-grow overflow-y-auto max-h-[calc(100vh-250px)] space-y-4"
+                    className="p-4 flex-grow overflow-y-auto max-h-[calc(100vh-250px)] space-y-4"
                     ref={messagesBox}
                 >
                     {messages.map((message, index) => (
@@ -113,7 +113,7 @@ export default function Home() {
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         // className="space-y-8"
-                        className="space-y-8 fixed bottom-0 mb-6 w-full flex space-x-3"
+                        className="p-4 space-y-8 fixed bottom-0 mb-6 w-full flex space-x-3"
                     >
                         <FormField
                             control={form.control}
