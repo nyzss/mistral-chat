@@ -14,12 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { sendMessage } from "@/lib/api";
-import Markdown from "react-markdown";
 import { useAtom } from "jotai/react";
 import { messageAtom } from "@/lib/atoms";
 import { UserMessage } from "@mistralai/mistralai/models/components";
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeKatex from "rehype-katex";
 
 const chatFormSchema = z.object({
     message: z.string().min(1).max(1000),
@@ -62,6 +64,47 @@ export default function Home() {
         });
     }, [messages]);
 
+    interface Block {
+        type: "markdown" | "text";
+        content: string;
+        language?: string;
+    }
+
+    const parseIntoBlocks = (message: string): Block[] => {
+        const regex = /```([\w]*)\n([\s\S]*?)```/g;
+
+        const result: Block[] = [];
+
+        let lastIndex = 0;
+
+        let match;
+        while ((match = regex.exec(message)) !== null) {
+            if (match.index > lastIndex) {
+                result.push({
+                    type: "text",
+                    content: message.slice(lastIndex, match.index),
+                });
+            }
+
+            result.push({
+                type: "markdown",
+                language: match[1],
+                content: match[2],
+            });
+
+            lastIndex = regex.lastIndex;
+        }
+
+        if (lastIndex < message.length) {
+            result.push({
+                type: "text",
+                content: message.slice(lastIndex),
+            });
+        }
+
+        return result;
+    };
+
     return (
         <div className="w-screen h-screen">
             <Button
@@ -90,11 +133,26 @@ export default function Home() {
                             >
                                 {message.role?.toUpperCase()}
                             </h1>
-                            <Markdown>
-                                {typeof message.content === "string"
+                            {parseIntoBlocks(
+                                typeof message.content === "string"
                                     ? message.content
-                                    : ""}
-                            </Markdown>
+                                    : ""
+                            ).map((block, index) => {
+                                if (block.type === "text") {
+                                    return <p key={index}>{block.content}</p>;
+                                }
+
+                                return (
+                                    <Markdown
+                                        key={index}
+                                        remarkPlugins={[remarkGfm]}
+                                        rehypePlugins={[rehypeKatex]}
+                                        className="dark:prose-invert prose"
+                                    >
+                                        {block.content}
+                                    </Markdown>
+                                );
+                            })}
                         </div>
                     ))}
                     {loading && (
