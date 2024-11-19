@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { sendMessage } from "@/lib/api";
-import { MessageList } from "./api/chat/route";
 import Markdown from "react-markdown";
+import { AssistantMessage } from "@mistralai/mistralai/models/components";
 
 const chatFormSchema = z.object({
     message: z.string().min(1).max(1000),
@@ -25,7 +25,7 @@ const chatFormSchema = z.object({
 export type ChatFormValues = z.infer<typeof chatFormSchema>;
 
 export default function Home() {
-    const [messages, setMessages] = useState<MessageList[]>([]);
+    const [messages, setMessages] = useState<AssistantMessage[]>([]);
 
     const form = useForm<ChatFormValues>({
         resolver: zodResolver(chatFormSchema),
@@ -38,6 +38,7 @@ export default function Home() {
         sendMessage(values).then((res) => {
             setMessages(res);
         });
+        form.reset();
     };
     // <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
     //     {messages.map((m) => (
@@ -62,8 +63,12 @@ export default function Home() {
             <div>
                 {messages.map((message, index) => (
                     <div key={index} className="flex flex-col divide-y">
-                        <h1>role: {message.role}</h1>
-                        <Markdown>{message.content}</Markdown>
+                        {message.role === "assistant" ? "AI: " : "User: "}
+                        <Markdown>
+                            {typeof message.content === "string"
+                                ? message.content
+                                : ""}
+                        </Markdown>
                     </div>
                 ))}
             </div>

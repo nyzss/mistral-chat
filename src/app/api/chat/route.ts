@@ -1,73 +1,42 @@
 import { ChatFormValues } from "@/app/page";
+import { Mistral } from "@mistralai/mistralai";
+import {
+    AssistantMessage,
+    SystemMessage,
+    ToolMessage,
+    UserMessage,
+} from "@mistralai/mistralai/models/components";
 
-const API_KEY = process.env.LLM_API_KEY;
-const URL: string =
-    process.env.LLM_URL || "https://api.mistral.ai/v1/chat/completions";
+const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+
+// export type Messages = UserMessage | SystemMessage;
+export type Message =
+    | (SystemMessage & { role: "system" })
+    | (UserMessage & { role: "user" })
+    | (AssistantMessage & { role: "assistant" })
+    | (ToolMessage & { role: "tool" });
 
 export async function POST(request: Request) {
     try {
+        // const data: Message[] = await request.json();
         const data: ChatFormValues = await request.json();
 
-        const req = await fetch(URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                Authorization: `Bearer ${API_KEY}`,
-            },
-            body: JSON.stringify({
-                model: "mistral-large-latest",
-                messages: [
-                    {
-                        role: "user",
-                        content: data.message,
-                    },
-                ],
-            }),
+        const completion = await mistral.chat.complete({
+            model: "mistral-small-latest",
+            messages: [
+                {
+                    role: "user",
+                    content: data.message,
+                },
+            ],
         });
 
-        const res: Response = await req.json();
-
-        const messages: MessageList[] = res.choices.map((choice) => ({
-            role: choice.message.role,
-            content: choice.message.content,
-        }));
+        const messages: AssistantMessage[] | undefined =
+            completion.choices?.map((choice) => choice.message);
 
         return Response.json(messages);
     } catch (error) {
         console.error(error);
         return Response.json({ error: "Invalid Request" });
     }
-}
-
-export interface Response {
-    id: string;
-    object: string;
-    created: number;
-    model: string;
-    choices: Choice[];
-    usage: Usage;
-}
-
-export interface Choice {
-    index: number;
-    message: Message;
-    finish_reason: string;
-}
-
-export interface Message {
-    role: string;
-    content: string;
-    tool_calls: unknown;
-}
-
-export interface Usage {
-    prompt_tokens: number;
-    total_tokens: number;
-    completion_tokens: number;
-}
-
-export interface MessageList {
-    role: string;
-    content: string;
 }
