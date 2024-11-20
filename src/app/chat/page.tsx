@@ -23,25 +23,39 @@ export default function Chat() {
         const reader = stream.getReader();
         const decoder = new TextDecoder();
 
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
+        let buffer = "";
 
-            const decoded = decoder.decode(value).slice(0, -1);
+        const flushBuffer = () => {
+            if (buffer) {
+                setContent((prev) => prev + buffer);
+                buffer = "";
+            }
+        };
 
-            const result: CompletionEvent[] = JSON.parse(
-                "[" + decoded + "]"
-            ).flat();
+        const interval = setInterval(flushBuffer, 100);
 
-            console.log("RESULT: ", result);
+        try {
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
 
-            const s = result
-                .map((el) => el.data.choices[0].delta.content)
-                .join("");
-            setContent(content + s);
-            // console.log("THIS IS A CHUNK: ", result);
+                const decoded = decoder.decode(value).slice(0, -1);
+
+                const result: CompletionEvent[] = JSON.parse(
+                    "[" + decoded + "]"
+                ).flat();
+
+                console.log("RESULT: ", result);
+
+                const s = result
+                    .map((el) => el.data.choices[0].delta.content)
+                    .join("");
+                buffer += s;
+            }
+        } finally {
+            clearInterval(interval);
+            flushBuffer();
         }
-        // console.log("FINAL: ", ss);
     };
     return (
         <div>
