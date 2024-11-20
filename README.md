@@ -30,7 +30,12 @@ A mini chat interface using the Mistral API. Built with Next.js, shadcn, and Tai
     npm install
     ```
 
-3. Run the development server:
+3. Add your mistral API key to a `.env` file:
+    ```bash
+    MISTRAL_API_KEY=your-api-key
+    ```
+
+4. Run the development server:
     ```bash
     npm run dev
     ```
