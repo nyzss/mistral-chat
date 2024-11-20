@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-    title: "Mini Mistral Chat",
+    title: "Le Mini Chat",
     description: "A very simple chat interface for Mistral",
 };
 

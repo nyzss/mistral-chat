@@ -6,7 +6,7 @@ import {
     UserMessage,
 } from "@mistralai/mistralai/models/components";
 
-const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+export const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
 export type Message =
     | SystemMessage
@@ -24,6 +24,16 @@ export async function POST(request: Request) {
             model: "mistral-small-latest",
             messages: data,
         });
+
+        const stream = await mistral.chat.stream({
+            model: "mistral-small-latest",
+            messages: data,
+        });
+
+        for await (const chunk of stream) {
+            const streamText = chunk.data.choices[0].delta.content;
+            console.log(streamText);
+        }
 
         const messages: AssistantMessage[] | undefined =
             completion.choices?.map((choice) => choice.message);
