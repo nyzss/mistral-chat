@@ -139,7 +139,16 @@ export default function Home() {
                                     : ""
                             ).map((block, index) => {
                                 if (block.type === "text") {
-                                    return <p key={index}>{block.content}</p>;
+                                    return (
+                                        <Markdown
+                                            key={index}
+                                            remarkPlugins={[remarkGfm]}
+                                            rehypePlugins={[rehypeKatex]}
+                                            className="dark:prose-invert prose"
+                                        >
+                                            {block.content}
+                                        </Markdown>
+                                    );
                                 }
 
                                 return (

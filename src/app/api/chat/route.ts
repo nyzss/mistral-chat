@@ -19,7 +19,6 @@ export type ReceivedMessage = Message & { role: string };
 export async function POST(request: Request) {
     try {
         const data: ReceivedMessage[] = await request.json();
-        console.warn("DATAAAAAAAAAAAAAAA: ", data);
 
         const completion = await mistral.chat.complete({
             model: "mistral-small-latest",
