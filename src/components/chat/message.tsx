@@ -2,6 +2,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import { Block, Message as IMessage } from "@/app/types";
+import Loading from "./loading";
 
 export default function Message({ message }: { message: IMessage }) {
     const parseIntoBlocks = (message: string): Block[] => {
@@ -35,6 +36,10 @@ export default function Message({ message }: { message: IMessage }) {
 
         return result;
     };
+
+    if (message.content === "Thinking...") {
+        return <Loading />;
+    }
 
     return (
         <div className="flex flex-col bg-neutral-900 rounded-sm p-3">

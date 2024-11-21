@@ -1,4 +1,4 @@
-import { Message } from "@/app/api/chat/route";
+import { Message } from "@/app/types";
 import { atomWithStorage } from "jotai/utils";
 
 export const messageAtom = atomWithStorage<Message[]>("messages", []);
