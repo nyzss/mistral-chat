@@ -1,7 +1,7 @@
 import { ReceivedMessage } from "@/app/types";
 import { Mistral } from "@mistralai/mistralai";
 
-export const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
 export const iteratorToStream = <T>(
     iterator: AsyncIterable<T>
