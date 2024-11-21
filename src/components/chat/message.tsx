@@ -4,7 +4,13 @@ import rehypeKatex from "rehype-katex";
 import { Block, Message as IMessage } from "@/app/types";
 import Loading from "./loading";
 
-export default function Message({ message }: { message: IMessage }) {
+export default function Message({
+    message,
+    showLoad,
+}: {
+    message: IMessage;
+    showLoad?: boolean;
+}) {
     const parseIntoBlocks = (message: string): Block[] => {
         const regex = /```([\w]*)\n([\s\S]*?)```/g;
 
@@ -37,7 +43,7 @@ export default function Message({ message }: { message: IMessage }) {
         return result;
     };
 
-    if (message.content === "Thinking...") {
+    if (showLoad && message.content?.length === 0) {
         return <Loading />;
     }
 

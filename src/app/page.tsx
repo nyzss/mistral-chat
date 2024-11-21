@@ -19,7 +19,7 @@ export default function Home() {
     const [generating, setGenerating] = useState<boolean>(false);
     const [content, setContent] = useState<AssistantMessage>({
         role: "assistant",
-        content: "Thinking...",
+        content: "",
     });
 
     const submitCallback = useCallback(
@@ -71,7 +71,7 @@ export default function Home() {
                     setGenerating(false);
                     return [...updated_messages, assistant_message];
                 });
-                setContent({ role: "assistant", content: "Thinking..." });
+                setContent({ role: "assistant", content: "" });
             }
         },
         [messages, setMessages]
@@ -101,7 +101,9 @@ export default function Home() {
                     {messages.map((message, index) => (
                         <Message key={index} message={message} />
                     ))}
-                    {generating && <Message message={content} />}
+                    {generating && (
+                        <Message message={content} showLoad={true} />
+                    )}
                 </div>
                 <PromptForm callback={submitCallback} />
             </div>
