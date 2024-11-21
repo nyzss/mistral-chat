@@ -1,12 +1,12 @@
 import { ReceivedMessage } from "@/app/types";
-import { iteratorToStream, mistral } from "../common";
+import { iteratorToStream, mistral, MODEL } from "../common";
 
 export async function POST(request: Request) {
     try {
         const data: ReceivedMessage[] = await request.json();
 
         const stream = await mistral.chat.stream({
-            model: "mistral-small-latest",
+            model: MODEL,
             messages: data,
         });
 

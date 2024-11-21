@@ -14,3 +14,5 @@ export const iteratorToStream = <T>(
         },
     });
 };
+
+export const MODEL = "mistral-large-latest";
