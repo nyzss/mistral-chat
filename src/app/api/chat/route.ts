@@ -1,20 +1,8 @@
+import { ReceivedMessage } from "@/app/types";
 import { Mistral } from "@mistralai/mistralai";
-import {
-    AssistantMessage,
-    SystemMessage,
-    ToolMessage,
-    UserMessage,
-} from "@mistralai/mistralai/models/components";
+import { AssistantMessage } from "@mistralai/mistralai/models/components";
 
 export const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-
-export type Message =
-    | SystemMessage
-    | UserMessage
-    | AssistantMessage
-    | ToolMessage;
-
-export type ReceivedMessage = Message & { role: string };
 
 export async function POST(request: Request) {
     try {
@@ -24,16 +12,6 @@ export async function POST(request: Request) {
             model: "mistral-small-latest",
             messages: data,
         });
-
-        const stream = await mistral.chat.stream({
-            model: "mistral-small-latest",
-            messages: data,
-        });
-
-        for await (const chunk of stream) {
-            const streamText = chunk.data.choices[0].delta.content;
-            console.log(streamText);
-        }
 
         const messages: AssistantMessage[] | undefined =
             completion.choices?.map((choice) => choice.message);

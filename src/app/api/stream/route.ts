@@ -1,6 +1,5 @@
-// import { EventStream } from "@mistralai/mistralai/lib/event-streams";
-import { mistral, ReceivedMessage } from "../chat/route";
-// import { CompletionEvent } from "@mistralai/mistralai/models/components";
+import { ReceivedMessage } from "@/app/types";
+import { mistral } from "../chat/route";
 
 export const iteratorToStream = <T>(
     iterator: AsyncIterable<T>

@@ -1,4 +1,4 @@
-import { Message } from "@/app/api/chat/route";
+import { Message } from "@/app/types";
 import { AssistantMessage } from "@mistralai/mistralai/models/components";
 
 export const sendMessage = async (message: Message[]) => {

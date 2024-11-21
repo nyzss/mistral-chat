@@ -27,12 +27,11 @@ export default function Chat() {
 
         const flushBuffer = () => {
             if (buffer) {
-                setContent((prev) => prev + buffer);
-                buffer = "";
+                setContent(buffer);
             }
         };
 
-        const interval = setInterval(flushBuffer, 100);
+        const interval = setInterval(flushBuffer, 50);
 
         try {
             while (true) {
@@ -45,8 +44,6 @@ export default function Chat() {
                     "[" + decoded + "]"
                 ).flat();
 
-                console.log("RESULT: ", result);
-
                 const s = result
                     .map((el) => el.data.choices[0].delta.content)
                     .join("");
@@ -55,6 +52,12 @@ export default function Chat() {
         } finally {
             clearInterval(interval);
             flushBuffer();
+            const assistant_message = {
+                content: buffer,
+                role: "assistant",
+            };
+            console.log(assistant_message);
+            buffer = "";
         }
     };
     return (
