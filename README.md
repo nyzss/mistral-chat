@@ -4,6 +4,24 @@ A mini chat interface using the Mistral API. Built with Next.js, shadcn, and Tai
 
 #### You can access it on [https://chat.okankoca.dev](https://chat.okankoca.dev)
 
+---
+
+## **Project Structure**
+
+```
+src/
+├── app/                 # Main application logic
+│   ├── api/             # Backend API routes (Next.js route handlers)
+├── components/          # Components
+│   ├── chat/            # Chat-specific components
+│   ├── ui/              # ShadcnUI components
+│   └── utils/           # Providers and shared logic
+├── lib/                 # Utility functions and state management
+├── public/              # Static assets
+```
+
+---
+
 ## Tech Stack and Frameworks
 
 - **Frontend:**
@@ -21,7 +39,7 @@ A mini chat interface using the Mistral API. Built with Next.js, shadcn, and Tai
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/mini-chat-interface.git
+    git clone https://github.com/nyzss/mistral-chat.git
     cd mini-chat-interface
     ```
 
@@ -41,7 +59,3 @@ A mini chat interface using the Mistral API. Built with Next.js, shadcn, and Tai
     ```
 
 4. Open [http://localhost:3000](http://localhost:3000)
-
-## License
-
-This project is licensed under the MIT License.
